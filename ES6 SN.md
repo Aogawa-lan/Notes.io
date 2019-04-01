@@ -33,5 +33,5 @@ javascript中，function和variables会被提升。
       var foo = 'hello';
       
       //undefined
-      ```
+ ```
 let 和 const则会not definde
