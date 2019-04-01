@@ -13,6 +13,19 @@
   }
   
   person.age = 24
-  
+
   24
+  
+  //使用object.freeze()则可使const的对象属性无法重赋值
   ```
+3.立即执行函数
+      1). 变量私有化方便，加{}。  
+      2). for循环时可解决变量在循环外的使用  
+      ```javascript
+      for(let i = 0; i < 10; i++){
+            console.log(i);
+            setTimeout(function(){
+                  console.log(`i:${i}`);  //&{}为模版字符串``的占位连接符，可插入函数
+            },1000)
+      }
+      ```
