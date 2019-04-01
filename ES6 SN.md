@@ -30,3 +30,13 @@
                   console.log(`i:${i}`);  //&{}为模版字符串``的占位连接符，可插入函数
             },1000)
       }
+```
+4.变量提升
+javascript中，function和variables会被提升。
+```javascript
+      console.log(foo);
+      var foo = 'hello';
+      
+      //undefined
+      ```
+let 和 const则会not definde
