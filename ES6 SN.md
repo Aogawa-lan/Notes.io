@@ -90,3 +90,44 @@ let 和 const则会not definde
 ```
 ## 字符串模版（Template Strings/Literals）
 ### 反引号，${}可放变量，参数，函数，算式，可嵌套
+示例
+```javascript
+  const lan = {
+    name : 'lan',
+    date : '2019-04-04',
+    todos : [
+      { name:'fanouxiang' , completed : true},
+      { name:'playfootball' , completed : false},
+      { name:'fanouxiang' , completed : true},
+    ]
+  }
+
+  const template = `
+  <ul>
+    ${lan.todos.map( todo =>
+      `<li>
+      ${todo.name} ${todo.completed ? '完成' : '未完成'}
+      </li>`
+    ).join('')} //join()函数去掉map生成新数组的逗号
+  </ul>
+  `
+  //为了可读性和拓展性，也可将ul写到一个函数里再引用
+  function renderTodos(todos){
+    return(
+       `<ul>
+          ${todos.map( todo =>
+            `<li>
+                ${todo.name} ${todo.completed ? '完成' : '未完成'}
+            </li>`
+          ).join('')} 
+  </ul>`
+    )
+  }
+
+  const template = `
+  ......
+  ${renderTods(lan.todos)}
+  ......
+  `
+
+```
