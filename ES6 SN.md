@@ -37,7 +37,7 @@ javascript中，function和variables会被提升。
 let 和 const则会not definde
 
 ## 箭头函数
-### 删掉function关键字，加上一个胖箭头（=>）,没有参数加括号，一个参数可无括，多个参数逗号分割。
+### 删掉function关键字，加上一个胖箭头'=>',没有参数加括号，一个参数可无括，多个参数逗号分割。
 ```javascript
   const numbers = [5,6,13,0,1,18,23];
   
@@ -52,4 +52,39 @@ let 和 const则会not definde
   
 ```
 
-### 隐性
+### 隐性返回：可不需要return即可返回参数。
+```javascript
+  const double2 = numbers.map( number => number * 2 );
+```
+箭头函数都为匿名函数，需要命名可赋值给一个变量
+### this值的指向问题
+```javascript
+  const Jelly = {
+    name : 'Jelly',
+    hobbies : ['Coding','Sleeping','Reading'],
+    printHobbies : function(){
+      this.hobbies.map(function(hobby){ //因为this值是在运行时才绑定的，此处的this指向为正常指向Jelly对象
+        console.log(`${this.name} loves ${hobby}`); //此处独立函数则指向window
+      })
+    }
+  }
+  
+  一般把this赋值给一个参数先声明，然后后期调用；
+  
+  ......function(){
+    var self = this;
+    this.hobbies.map(function(hobby){ 
+        console.log(`${self} loves ${hobby}`);
+  }......
+  
+```
+若用箭头函数则为
+```javascript
+......function(){
+    var self = this;
+    this.hobbies.map( hobby => { //下面this继承此处this
+        console.log(`${this.name} loves ${hobby}`);
+  }......
+  
+  //因为箭头函数没有自己的this值，this继承父作用域
+```
