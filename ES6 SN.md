@@ -1,7 +1,7 @@
 # 关于ES6的学习笔记
 ## var let const
 ### 1. var为函数作用域，在函数中声明为局部变量，外为全局变量。
-### 2. let和const为块级作用域，以一个{}为作用域，在同一个作用域下无法重复声明。
+### 2. let和const为块级作用域，以一个`{}`为作用域，在同一个作用域下无法重复声明。
 (1). let与const声明整型字符串等时，let可以重新赋值 const则不行，声明对象时let可重赋值可重声明，const则不可重声明，可重赋值
 ```javascript
   const person{
@@ -36,8 +36,8 @@ javascript中，function和variables会被提升。
  ```
 let 和 const则会not definde
 
-## 箭头函数
-### 删掉function关键字，加上一个胖箭头'=>',没有参数加括号，一个参数可无括，多个参数逗号分割。
+## 箭头函数(Arrow Function)
+### 删掉function关键字，加上一个胖箭头`=>`,没有参数加括号，一个参数可无括，多个参数逗号分割。
 ```javascript
   const numbers = [5,6,13,0,1,18,23];
   
@@ -52,7 +52,7 @@ let 和 const则会not definde
   
 ```
 
-### 隐性返回：可不需要return即可返回参数。
+### 隐性返回：可不需要`return`即可返回参数。
 ```javascript
   const double2 = numbers.map( number => number * 2 );
 ```
@@ -88,3 +88,5 @@ let 和 const则会not definde
   
   //因为箭头函数没有自己的this值，this继承父作用域
 ```
+## 字符串模版（Template Strings/Literals）
+### 反引号，${}可放变量，参数，函数，算式
