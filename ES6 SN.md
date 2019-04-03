@@ -131,3 +131,55 @@ let 和 const则会not definde
   `
 
 ```
+### 标签模版字符串
+在模版字符串前设置一个标签
+```javascript
+const sentence = highlignt`${user} has commented on your topic ${topic}`;
+```
+这里的hightlight字符串对应的是函数名,最后调用sentence时，返回内容由highlight函数决定
+```javascript
+funbction highlight(string,...values){ 
+  //string是一个数组，由模版字符串里面的普通字符组成
+  //...values也是一个数组，由模版字符串的参数组成，也可直接写参数名
+  //若以参数开头或结尾，string开头会有1个空字符串
+}
+```
+过滤用户实践（防XSS攻击）
+```javascript
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/1.0.10/purify.min.js"></script>
+//使用dodompurify.js过滤
+  <div class="container">
+        <form class="add-comment">
+            <textarea class="comment-text" placeholder="enter">
+            </textarea>
+            <button>Post Comment</button>
+        </form>
+        <div class="comment"></div>
+    </div>
+
+        const addCommentForm = document.querySelector('.add-comment');
+        const textarea = document.querySelector('.comment-text');
+        const commentDiv = document.querySelector('.comment');
+        const user = 'Mary';
+
+        function sanitize = (strings, ...values){
+          const dirty = strings.reduce((prev,curr,i) => `
+            ${prev}${curr}${values[i] || ''}
+          `,'');
+          return DOMPurify.sanitize(dirty);
+        }
+
+        addCommentForm.addEventListener('submit',function(event){
+            event.preventDefault();
+            const newComment = textarea.value.trim();
+
+            if(newComment){
+                commentDiv.innerHTML = sanitize`
+                    <div class="commrnt-header">${user}</div>
+                    <div class="commrnt-body">${newComment}</div>
+                `
+                textarea.value = '';
+            }
+        })
+
+```
