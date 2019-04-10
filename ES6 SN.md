@@ -183,3 +183,36 @@ funbction highlight(string,...values){
         })
 
 ```
+
+## 新增字符串函数
+### statrsWith('string',位置) / endsWith('string',位置)
+判断是否以指定字符串开头，判断大小写，空格占一位
+```javascript
+  const id = '51030019800730366x';
+
+  id.startsWith('51'); //true
+
+  id.startsWith('1980',6);  //true
+```
+### includes('string',位置)
+查询是否包含字符串
+```javascript
+
+  const fan = 'I Love JLS';
+
+  //旧方法为判断indexOF是否为-1
+
+  fan.indexOf('Love') !== -1; //true
+
+  //使用includes()可返回布尔值
+
+  fan.includes('Love'); //true
+
+  //同样可以加入位置参数判断
+```
+
+### repeat()
+重复字符串
+```javascript
+  '哈'.repeat(10); // '哈哈哈哈哈哈哈哈哈哈'
+```
