@@ -185,7 +185,7 @@ funbction highlight(string,...values){
 ```
 
 ## 新增字符串函数
-### statrsWith('string',位置) / endsWith('string',位置)
+### stratsWith('string',位置) / endsWith('string',位置)
 判断是否以指定字符串开头，判断大小写，空格占一位
 ```javascript
   const id = '51030019800730366x';
