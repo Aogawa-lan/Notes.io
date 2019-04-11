@@ -58,7 +58,7 @@ request 请求事件处理函数可接收两个参数：
 
 ## 读取/写入文件操作
 ### 读取文件
-异步 readFile() 同步readFileSync()
+&#160;异步 readFile() 同步readFileSync()
 ```javascript
   const fs = require('fs');//文件操作使用fs模块
 
