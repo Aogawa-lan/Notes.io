@@ -216,3 +216,42 @@ funbction highlight(string,...values){
 ```javascript
   '哈'.repeat(10); // '哈哈哈哈哈哈哈哈哈哈'
 ```
+
+## For of循环
+数组循环遍历
+```javascript
+  const fruits = ['Apple', 'Banana', 'Orange', 'Mango'];
+  //旧方法
+
+  //1.for循环
+  for( i=0; i<fruits.length; i++){
+    console.log(fruits[i]);
+  }
+
+  //2.forEach()循环
+  fruits.forEach(fruit =>{
+    console.log(fruit);
+  })
+
+  //3.for in循环
+  for(let index in fruits){
+    console.log(fruits[index]);
+  }
+
+  //新方法
+  for(let fruit of fruits){
+    //支持循环中止
+    console.log(fruit);
+  }
+```
+
+## Array新增方法
+### .from(参数,fn)
+可将类数组或可迭代对象转变为真正的数组
+
+```javascript
+  const todos = document.querySelectorAll('li');
+  // todos为NodeList类型 无法使用map()
+  const todosArr = Array.from(todos);
+  //fn可添加回调函数
+```
