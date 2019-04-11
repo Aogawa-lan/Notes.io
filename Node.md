@@ -1,11 +1,11 @@
 # 关于Node JS的学习笔记
 ## Win dos与Mac bash命令
 ### dos
-计算机端口  netstat -ano  
-关闭进程  taskkill /f /im 进程名称
+  计算机端口  netstat -ano  
+  关闭进程  taskkill /f /im 进程名称
 ### bash
-计算机端口  lsof -i tcp:端口号  
-关闭进程  kill PID
+  计算机端口  lsof -i tcp:端口号  
+  关闭进程  kill PID
 
 ## 创建web服务器
 
@@ -58,7 +58,7 @@
 
 ## 读取/写入文件操作
 ### 读取文件
-异步 readFile() 同步readFileSync()
+  异步 readFile() 同步readFileSync()
 ```javascript
   const fs = require('fs');//文件操作使用fs模块
 
