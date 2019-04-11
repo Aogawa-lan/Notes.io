@@ -1,11 +1,11 @@
 # 关于Node JS的学习笔记
 ## Win dos与Mac bash命令
 ### dos
-&#160;计算机端口&#160;netstat -ano  
-&#160;关闭进程&#160;taskkill /f /im 进程名称
+>计算机端口>netstat -ano  
+>关闭进程>taskkill /f /im 进程名称
 ### bash
-&#160;计算机端口&#160;lsof -i tcp:端口号  
-&#160;关闭进程&#160;kill PID
+>计算机端口>lsof -i tcp:端口号  
+>关闭进程>kill PID
 
 ## 创建web服务器
 
@@ -39,11 +39,11 @@
   });
 ```
 ####   request 请求事件处理函数
-&#160;request 请求事件处理函数可接收两个参数：  
-&#160;&#160;Request 请求对象
-&#160;&#160;&#160;&#160;请求对象可以用来获取客户端的一些请求，例如请求路径  
-&#160;&#160;Response 响应对象  
-&#160;&#160;&#160;&#160;响应对象可以用来给客户端发送响应消息
+>request 请求事件处理函数可接收两个参数：  
+>>Request 请求对象
+>>>>请求对象可以用来获取客户端的一些请求，例如请求路径  
+>>Response 响应对象  
+>>>>响应对象可以用来给客户端发送响应消息
 
 ```javascript
   server.on('request',function(req,res){
@@ -58,7 +58,7 @@
 
 ## 读取/写入文件操作
 ### 读取文件
-&#160;异步 readFile() 同步readFileSync()
+>异步 readFile() 同步readFileSync()
 ```javascript
   const fs = require('fs');//文件操作使用fs模块
 
