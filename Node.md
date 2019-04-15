@@ -143,5 +143,151 @@ require方法有2个作用
 ### 下载使用
 ```npm
   npm install art-template
+
+  const template = require('art-template');//引用
+
+  template.render('模版对象',替换对象)//render渲染
+
+  const ret = template.render('hello {{ name }}', {
+    name : 'Lan'
+  })
+```
+### 使用实例
+
+```javascript
+  //index.html
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p>大家好我叫{{ name }}</p>
+    <p>我今年{{ age }}岁了</p>
+    <p>我来自{{ province }}</p>
+    <p>我的爱好是{{ each hobbies }} {{ $value }} {{/each}}</p>
+</body>
+</html>
+
+```
+```javascript
+  //index.js
+
+  const template = require('art-template');
+
+const fs = require('fs');
+
+fs.readFile('./index.html',function(err,data){
+    if(err){
+        return console.log('读取失败');
+    }else{
+        const ret = template.render(data.toString(), {
+            name: 'Lan',
+            age : 18,
+            province: 'gzs',
+            hobbies : ['ps4','ns','lol']
+        })
+
+        console.log(ret)
+    }
+})
+```
+执行index.js得到数据渲染后的html。因模版引擎只看{{}}标签标记的代码，其他都归为字符串。
+
+## 服务端加载静态资源问题
+服务器请求加载`link`,`script`,`img`,`iframe`,`video`,`audio`等具有`src`,`href`属性的时候会自动对这些资源发起新的请求
+
+如：
+```javascript
+  <link href="node_modules/...../XXX.css">
+  //服务器端请求时为 XXX.XXX.XX.XX:XXX/node...../.css  此时会因为加载问题一直挂起
+
+```
+解决：将静态资源整合到`public`中并开放
+
+```javascript
+  const http = require('http');
+  const fs = require('fs');
+
+  let cs = (req, res) => {
+    res.setHeader('Content-type', 'text/plain;charset=utf-8');
+    const url = req.url
+    if(url === '/'){    //当主页html请求时，加载XXX.html
+      fs.readFile('./XXX.html',(err,data) => {
+        if(err) { return res.end('404 Not Found.') }
+        else {return res.end(data)}
+      })
+    }
+    else if(url.indexOf('/public/') === 0){     //当以/public/开头的资源请求时，重写为./public/请求
+      fs.readFile('.' + url ,(err,data) => {
+        if(err) { return res.end('404 Not Found.') }
+        else {return res.end(data)}
+      })
+    }
+  }
+
+  http.createServer(cs).listen(666,()=>{
+    console.log('http is ok');
+  });
 ```
 
+## 处理表单问题
+当form表单向js发起提交事件后，跳转的url可使用url模块的`url.parse()`获取需要的数据
+
+```javascript
+  const url = require('url')
+
+  const obj = url.parse('/pinglun?name=Lan&message=HelloNode')
+
+  console.log(obj)
+
+  // Url {
+  // protocol: null,
+  // slashes: null,
+  // auth: null,
+  // host: null,
+  // port: null,
+  // hostname: null,
+  // hash: null,
+  // search: '?name=Lan&message=HelloNode',
+  // query: 'name=Lan&message=HelloNode',
+  // pathname: '/pinglun',
+  // path: '/pinglun?name=Lan&message=HelloNode',
+  // href: '/pinglun?name=Lan&message=HelloNode' }
+```
+
+若想将query直接变为对象，可加参数`true`
+
+```javascript
+  ...
+  const obj = url.parse('/pinglun?name=Lan&message=HelloNode',true)
+
+  console.log(obj)
+
+  // Url {
+  // protocol: null,
+  // slashes: null,
+  // auth: null,
+  // host: null,
+  // port: null,
+  // hostname: null,
+  // hash: null,
+  // search: '?name=Lan&message=HelloNode',
+  // query: { name: 'Lan', message: 'HelloNode' },
+  // pathname: '/pinglun',
+  // path: '/pinglun?name=Lan&message=HelloNode',
+  // href: '/pinglun?name=Lan&message=HelloNode' }
+```
+此时即可通过`obj.query`来操作获取的表单数据了
+
+## 如何通过服务器让客户端重定向
+* 状态码设置为`302`临时重定向
+* 在响应头中通过`Location`告诉客户端往哪重定向
+```javascript
+  res.statusCode = 302;
+  res.setHeader('Location','/')
+```
