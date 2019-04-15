@@ -14,6 +14,7 @@
   const http = require('http');//调用模块
 
   let cs = (req,res) =>{
+    res.setHeader('Content-type','text/plain;charset=utf-8');
     res.write('Hello Node!');
     res.end();//创建后关闭
   }
@@ -52,13 +53,21 @@ request 请求事件处理函数可接收两个参数：
   });
 ```
 
-  response 对象有一个方法 write 可以用来给客户端发送响应数据
+response 对象有一个方法 write 可以用来给客户端发送响应数据  
+可以使用多次，但是最后一定要使用end来结束响应，否者客户端会一直等待
+
+```javascript
+  server.on('request',function(req,res){
+    res.write('Hello Node');
+    res.end();
+  });
+```
 
 
 
 ## 读取/写入文件操作
 ### 读取文件
-&#160;异步 readFile() 同步readFileSync()
+异步 readFile() 同步readFileSync()
 ```javascript
   const fs = require('fs');//文件操作使用fs模块
 
@@ -87,4 +96,45 @@ request 请求事件处理函数可接收两个参数：
     console.log('error');
     return 
   }
+```
+
+## 模块系统
+### require
+require用来加载模块
+* 具名核心模块。fs，http，os等
+* 用户自己编写的文件模块 （先对路径必须加 ./）
+* npm下载第三方模块  
+
+//Node中没有全局作用域只有模块作用域
+```javascript
+  //a.js
+  var  f00 = 'aaa';
+
+  require('./b.js');
+
+  console.log(foo);
+
+  //b.js
+  var foo = 'bbb';
+
+  console.log('b end');
+
+  //此处输出的foo为aaa，并不会受b.js影响
+```
+
+若需要外部访问变量以及函数交流，则需要使用接口对象
+
+require方法有2个作用
+* 1.加载文件模块并执行里面的代码
+* 2.拿到被加载文件模块导出的借口对象：exports对象
+
+```javascript
+  //上一段代码
+  ...//a.js
+  const b = require('./b.js');
+
+  console.log(b.foo);
+  //b.js
+  exports.foo = 'bbb'
+  ...
 ```
