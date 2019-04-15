@@ -105,7 +105,7 @@ require用来加载模块
 * 用户自己编写的文件模块 （先对路径必须加 ./）
 * npm下载第三方模块  
 
-//Node中没有全局作用域只有模块作用域
+Node中没有全局作用域只有模块作用域
 ```javascript
   //a.js
   var  f00 = 'aaa';
@@ -126,7 +126,7 @@ require用来加载模块
 
 require方法有2个作用
 * 1.加载文件模块并执行里面的代码
-* 2.拿到被加载文件模块导出的借口对象：exports对象
+* 2.拿到被加载文件模块导出的接口对象：exports对象
 
 ```javascript
   //上一段代码
@@ -138,3 +138,10 @@ require方法有2个作用
   exports.foo = 'bbb'
   ...
 ```
+
+## 使用模版引擎（art-template）
+### 下载使用
+```npm
+  npm install art-template
+```
+
