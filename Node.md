@@ -199,7 +199,7 @@ fs.readFile('./index.html',function(err,data){
 执行index.js得到数据渲染后的html。因模版引擎只看{{}}标签标记的代码，其他都归为字符串。
 
 ## 服务端加载静态资源问题
-服务器请求加载`link`,`script`,`img`,`iframe`,`video`,`audio`等具有`src`,`href`属性的时候会自动对这些资源发起新的请求
+服务器请求加载 `link` , `script` , `img` , `iframe` , `video` , `audio` 等具有 `src` , `href` 属性的时候会自动对这些资源发起新的请求
 
 如：
 ```javascript
@@ -207,7 +207,7 @@ fs.readFile('./index.html',function(err,data){
   //服务器端请求时为 XXX.XXX.XX.XX:XXX/node...../.css  此时会因为加载问题一直挂起
 
 ```
-解决：将静态资源整合到`public`中并开放
+解决：将静态资源整合到 `public` 中并开放
 
 ```javascript
   const http = require('http');
@@ -236,7 +236,7 @@ fs.readFile('./index.html',function(err,data){
 ```
 
 ## 处理表单问题
-当form表单向js发起提交事件后，跳转的url可使用url模块的`url.parse()`获取需要的数据
+当form表单向js发起提交事件后，跳转的url可使用url模块的 `url.parse()` 获取需要的数据
 
 ```javascript
   const url = require('url')
@@ -260,7 +260,7 @@ fs.readFile('./index.html',function(err,data){
   // href: '/pinglun?name=Lan&message=HelloNode' }
 ```
 
-若想将query直接变为对象，可加参数`true`
+若想将query直接变为对象，可加参数 `true`
 
 ```javascript
   ...
@@ -282,11 +282,11 @@ fs.readFile('./index.html',function(err,data){
   // path: '/pinglun?name=Lan&message=HelloNode',
   // href: '/pinglun?name=Lan&message=HelloNode' }
 ```
-此时即可通过`obj.query`来操作获取的表单数据了
+此时即可通过 `obj.query` 来操作获取的表单数据了
 
 ## 如何通过服务器让客户端重定向
-* 状态码设置为`302`临时重定向
-* 在响应头中通过`Location`告诉客户端往哪重定向
+* 状态码设置为 `302` 临时重定向
+* 在响应头中通过 `Location` 告诉客户端往哪重定向
 ```javascript
   res.statusCode = 302;
   res.setHeader('Location','/')
