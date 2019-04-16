@@ -14,7 +14,7 @@
   24
   
   //使用object.freeze()则可使const的对象属性无法重赋值
-  ```
+```
 ### 3.立即执行函数
 (1). 变量私有化方便，加{}。  
 (2). for循环时可解决变量在循环外的使用  
@@ -33,7 +33,7 @@ javascript中，function和variables会被提升。
       var foo = 'hello';
       
       //undefined
- ```
+```
 let 和 const则会not definde
 
 ## 箭头函数(Arrow Function)
@@ -250,8 +250,16 @@ funbction highlight(string,...values){
 可将类数组或可迭代对象转变为真正的数组
 
 ```javascript
-  const todos = document.querySelectorAll('li');
-  // todos为NodeList类型 无法使用map()
-  const todosArr = Array.from(todos);
-  //fn可添加回调函数
+const todos = document.querySelectorAll('li')
+// todos为NodeList类型 无法使用map()
+
+//旧方法
+const todosArr = [].slice.call('li')
+const todosArr = Array.prototype.slice.call('li')
+
+//新
+const todosArr = Array.from(todos);
+//fn可添加回调函数
 ```
+
+转为真数组后可使用forEach等数组函数

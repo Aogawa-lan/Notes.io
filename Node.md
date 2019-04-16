@@ -137,11 +137,39 @@ require方法有2个作用
   //b.js
   exports.foo = 'bbb'
   ...
+  //原型是
+  module.exports = 'bbb'
+	//此时exports为单个对象，多个可使用对象构造
+	module.exports = {
+  	add: function(){},
+  	...
+	}
+  //底层最后是 return module.exports
+  //因为node里封装了var exports = module.exports
 ```
 
+### 引第三方包时加载规则
+
+既不是核心模块、也不是路径形式时，会先找到当前文件所处目录的 `node_modules` 目录寻找引用的第三方名称
+
+```javascript
+const template = require('art-template')
+```
+
+然后寻找在 node_modules/art-template/package.json 中的 `main` 属性，这里记录了入口模块
+
+```json
+{
+  "main" : "index.js"
+}
+```
+
+如果本目录下没有 `node_modules` 则会进入上一级目录中寻找，直到根目录还找不到便报错 `can not find module`  
+
 ## 使用模版引擎（art-template）
+
 ### 下载使用
-```npm
+```javascript
   npm install art-template
 
   const template = require('art-template');//引用
@@ -214,7 +242,6 @@ fs.readFile('./index.html',function(err,data){
   const fs = require('fs');
 
   let cs = (req, res) => {
-    res.setHeader('Content-type', 'text/plain;charset=utf-8');
     const url = req.url
     if(url === '/'){    //当主页html请求时，加载XXX.html
       fs.readFile('./XXX.html',(err,data) => {
@@ -291,3 +318,56 @@ fs.readFile('./index.html',function(err,data){
   res.statusCode = 302;
   res.setHeader('Location','/')
 ```
+
+## npm与package.json
+
+### npm
+
+* npm网站
+
+  npmjs.com
+
+* npm命令行
+
+  常用命令
+
+  ```bash
+  npm init //初始化项目
+  	npm init -y //可以跳过向导，快速生成
+  npm install //安装包
+  npm uninstall //卸载包
+  npm help
+  ```
+
+### package.json
+
+package.json可以用来描述说明依赖包，使用npm可直接写入
+
+```bash
+npm install XXX --save
+```
+
+```json
+{
+  "dependencies": {
+    "XXX": "^4.12.2"
+  }
+}
+```
+
+建议每一个项目都要有一个 `package.json` 文件，可通过 `npm init` 的方式来自动初始化出来
+
+```bash
+$ npm init
+	name: (npm-demo) //项目名称
+	version: (1.0.0) //版本号
+	description: 这是一个测试项目  //描述
+	entry point: (index.js) //项目入口文件
+	test command: //测试命令
+	git repository: //github地址
+	keywords: //关键字
+	author: //作者
+	license: (ISC) //开源许可证
+```
+
+当不小心将 `node_modules` 删除时，可以接使用 `npm install` 安装回来
