@@ -332,11 +332,11 @@ fs.readFile('./index.html',function(err,data){
   常用命令
 
   ```bash
-  npm init //初始化项目
-  	npm init -y //可以跳过向导，快速生成
-  npm install //安装包
-  npm uninstall //卸载包
-  npm help
+  # npm init //初始化项目
+  	# npm init -y //可以跳过向导，快速生成
+  # npm install //安装包
+  # npm uninstall //卸载包
+  # npm help
   ```
 
 ### package.json
@@ -358,7 +358,7 @@ npm install XXX --save
 建议每一个项目都要有一个 `package.json` 文件，可通过 `npm init` 的方式来自动初始化出来
 
 ```bash
-$ npm init
+# npm init
 	name: (npm-demo) //项目名称
 	version: (1.0.0) //版本号
 	description: 这是一个测试项目  //描述
@@ -371,3 +371,111 @@ $ npm init
 ```
 
 当不小心将 `node_modules` 删除时，可以接使用 `npm install` 安装回来
+
+## 修改代码自动重启服务器
+
+#### 使用第三方模块 `nodemon` 
+
+```bash
+# npm install -g nodemon
+```
+
+#### 安装完毕后，使用：
+
+```bash
+# nodemon app.js
+```
+
+
+
+## Express
+
+原生http在某些方面不足以应对我们的开发需求，需要借助框架加快开发
+
+### 下载安装express
+
+`````bash
+# npm init -y
+# npm install express --save
+`````
+
+### 创建连接服务器
+
+```javascript
+const express = require('express')
+
+//express()为原来的http.createServer
+let app = express()
+
+//当服务器收到 get 请求 / 时，执行回调函数
+app.get('/',(req,res) => {
+    res.send('Hello Node')
+})
+
+app.post('/',(req,res) => {
+  res.send('Get a Post request')
+})
+
+app.listen(666,() => {
+    console.log('app is running');
+})
+```
+
+### 处理静态资源，公开指定目录
+
+```javascript
+app.use('/public/',express.static('./public'))
+//XXXX:XXX/public/XXX.html
+
+//当省略第一个参数的时候
+app.use(express.static('./public'))
+//XXXX:XXX/XXX.html
+
+app.use('/a/',express.static('./public'))
+//XXX:XXX/a/XXX.html  物料放在public
+```
+
+## 在express中使用art-template
+
+#### 下载安装
+
+```bash
+# npm install art-template --save
+# npm install express-art-template --save
+```
+
+#### 配置
+
+```javascript
+app.engine('art',require('express-art-template'))
+```
+
+第一个参数表示当渲染以 `.art` 为后缀的文件时，使用 `art-template` 模版引擎 
+
+express-art-template 是专门用来在express中整合art-template的
+
+```jab
+res.render('html模版名',{模版数据})
+```
+
+ `Express`为`Response`相应对象提供了一个方法：`render`， `render` 方法默认时不可用的，配置后模版引擎即可
+
+第一个参数不可卸路径，默认去项目中的 `views` 目录查找该模版文件，即把所有视图文件放到 `views` 目录中
+
+```javascript
+app.get('/',(req,res) => {
+    res.render('404.art')
+})
+app.get('/admin', (req, res) => {
+    res.render('admin/index.html',{
+        title: '管理界面'
+    })
+})
+```
+
+若向修改 `views` 目录的路径，则可以
+
+```javascript
+app.set('views',render函数的默认路径)
+```
+
