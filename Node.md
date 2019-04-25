@@ -98,7 +98,26 @@ response 对象有一个方法 write 可以用来给客户端发送响应数据
   }
 ```
 
+## 使用bat直接调用node文件/node直接发起浏览器
+
+bat文件设置,同目录下
+
+```ba
+node xxx.js
+```
+
+直接发起浏览器
+
+```javascript
+const cp = require('child_process')
+
+cp.exec('star http://localhost:3000/')
+```
+
+
+
 ## 模块系统
+
 ### require
 require用来加载模块
 * 具名核心模块。fs，http，os等
@@ -477,5 +496,269 @@ app.get('/admin', (req, res) => {
 
 ```javascript
 app.set('views',render函数的默认路径)
+```
+
+### express中重定向
+
+```javascript
+res.redirect('/')
+```
+
+## Express表单重写
+
+### 原表单GET请求
+
+使用 res.query
+
+```javascript
+//app.js
+
+const express = require('express')
+const template = require('art-template')
+
+//express()为原来的http.createServer
+let app = express()
+
+app.use('/public/' , express.static('./public/'))
+
+app.engine('html',require('express-art-template'))
+
+var comments = [
+    {
+        name : 'yy1',
+        message : 'today'
+    },
+    {
+        name: 'yy2',
+        message: 'today'
+    },
+    {
+        name: 'yy3',
+        message: 'today'
+    },
+    {
+        name: 'yy4',
+        message: 'today'
+    }
+]
+
+//当服务器收到 get 请求 / 时，执行回调函数
+app.get('/',(req,res) => {
+    res.render('index.html',{
+        title : '主页',
+        comments : comments
+    })
+})
+
+app.get('/post', (req, res) => {
+    res.render('post.html',{
+        title: '留言'
+    })
+})
+
+app.get('/pinglun',(req,res) => {
+    var comment = req.query
+    comments.unshift(comment)
+    res.redirect('/')
+})
+
+app.listen(3000,() => {
+    console.log('app is running');
+})
+
+//index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <button><a href="/post">留言</a></button>
+
+    <table>
+        <tr>
+            <th>name</th>
+            <th>message</th>
+        </tr>
+        {{each comments}}
+        <tr>
+            <td>{{$value.name}}</td>
+            <td>{{$value.message}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</body>
+</html>
+          
+          
+//post.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>{{title}}</h1>
+    <hr>
+    <form action="/pinglun" method="get">
+        <input type="text" name="name">
+        <input type="text" name="message">
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>
+```
+
+
+
+### 现修改使用app.post与form post
+
+express没有内置获取表单POST请求的API，这里需要使用第三方包 `body-parser` 
+
+安装
+
+```shell
+# npm install body-parser --save
+```
+
+配置
+
+```javascript
+const bodyParser = require('body-parser')
+//只要加入，则在 req 请求对象上会多出来一个属性：body
+//也就是说你就可以直接通过 req.body 来获取表单 POST 请求体数据
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use(bodyParser.json())
+```
+
+
+
+```javascript
+//app.js
+...
+	app.get('/post', (req, res) => {
+    res.render('post.html',{
+        title: '留言'
+    })
+})
+
+//app.get('/pinglun',(req,res) => {
+//   var comment = req.query
+//    comments.unshift(comment)
+//    res.redirect('/')
+//})
+
+//req.query因为是拿url后的字符串，所以只能使用在get
+
+app.post('/post',(req,res) => {
+    var comment = req.body
+    comments.unshift(comment)
+    res.redirect('/')
+})
+...
+```
+
+## 路由设计
+
+### 页面逻辑
+
+| 请求方法 |    请求路径    | get参数 |      post参数      |       备注       |
+| :------: | :------------: | :-----: | :----------------: | :--------------: |
+|   GET    |    /studens    |         |                    |     渲染主页     |
+|   GET    | /students/new  |         |                    | 渲染添加学生页面 |
+|   POST   |    /studens    |         | name、age、hobbies | 处理添加学生请求 |
+|   GET    | /students/edit |   id    |                    |     渲染编辑     |
+
+### 路由调用
+
+将router封装成一个方法，app当参数传入
+
+```javascript
+//启动文件设置
+//app.js
+var router = require('./router')
+
+var app = express()
+
+router(app)
+
+module.exports = app
+```
+
+```javascript
+//路由文件设置
+//router.js
+module.exports = function(){
+ 	...路由
+  app.get(...)
+}
+
+
+```
+
+Express提供了一种更好的方式专门包装路由
+
+```javascript
+//启动文件设置
+//app.js
+var express = require('express')
+var router = require('./router')
+
+var app = express()
+
+app.use(router)
+```
+
+```javascript
+//路由文件设置
+//router.js
+var express = require('express')
+//创建路由
+var router = express.Router()
+//挂载路由
+router.get(...)
+
+module.exports = router
+```
+
+## 回调函数获取异步数据
+
+```javascript
+//callback中的参数
+	//第一个参数是err
+		//成功是null
+		//错误是错误对象
+	//第二个参数是结果
+		//成功是数组
+		//错误是 undefined
+exports.find = function(callback){
+  fs.readFile(dbPath,function(err,data){
+    if(err){
+      return callback(err)
+    }
+    else {
+      callback(null,JSON.parse(data).students)
+    }
+  })
+}
+
+---------
+ //在此处定义callback的内容，既find()里的函数
+Student.find(function(err,students){
+  if (err){
+    return res.status(500).send('Sever error.')
+  }
+  else{
+    res.render(...)
+  }
+})
 ```
 
