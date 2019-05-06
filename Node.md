@@ -114,6 +114,47 @@ const cp = require('child_process')
 cp.exec('star http://localhost:3000/')
 ```
 
+## Node中的session
+
+安装
+
+```shell
+# npm install express-session --save
+```
+
+参数/方法
+
+```javascript
+secret : 一个String类型的字符串，作为服务端生成session的签名
+resave : （是否允许）当客户端并行发送多个请求时，其中一个请求在另一个请求结束时对session进行覆盖保存
+saveUninitialized : 初始化session时是否保存到存储
+cookie : 设置返回前段key的属性，默认值{ path:'/',httpOnly : true,secure : false,maxAge: null }
+
+session.destroy() : 删除session，当检测到客户端关闭时调用
+session.reload() : 当session有修改时，刷新session
+session.regenerate() : 将已有session初始化
+session.save() : 保存session
+```
+
+配置
+
+```javascript
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
+var user = {
+  name: 'lan',
+  age: '22'
+}
+req.session.user = user
+
+var name = req.session.user.name 
+```
+
 
 
 ## 模块系统
@@ -390,6 +431,12 @@ npm install XXX --save
 ```
 
 当不小心将 `node_modules` 删除时，可以接使用 `npm install` 安装回来
+
+### package-lock.json
+
+npm5以后加入此文件。当你安装包的时候都会生成更新这个文件，保存所有包的依赖（版本，下载地址）
+
+lock比之package在于可以锁版本，防止自动升级最新。
 
 ## 修改代码自动重启服务器
 
