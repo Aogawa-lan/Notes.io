@@ -263,3 +263,12 @@ const todosArr = Array.from(todos);
 ```
 
 转为真数组后可使用forEach等数组函数
+
+## Promise容器
+
+处理异步问题
+
+```javascript
+
+```
+

@@ -809,3 +809,92 @@ Student.find(function(err,students){
 })
 ```
 
+## Express + Multer + Ajax表单文件上传
+
+### 使用FormData对象
+
+通过把表单的编码类型设置为`multipart/form-data` ,则通过FormData传输的数据格式和表单通过submit()方法传输的数据格式相同
+
+### 纯文本提交
+
+```html
+//html
+
+<form class="form" method="post" enctype="multipart/form-data">
+  <input type="text" class="form-control inputdata" name="name" value="">
+  
+  <a href="javascript:;" id="upload">提交</a>
+</form>
+```
+
+```javascript
+//js ajax异步提交
+
+$('.form').on('click','#upload',function(){
+ var formData = $(this).serialize() //
+ 
+ $.ajax({
+   url: '/upload',
+   type: 'post',
+   data: 'formData',
+   dataType: 'json',
+   success: function(data) {
+    let err_code = data.err_code
+
+    if(err_code === 0){
+        $.hulla.send('上传成功','success')
+    }else if(err_code === 1){
+        $.hulla.send('订单号已存在', 'danger')
+    }else if(err_code === 500){
+        $.hulla.send('服务器繁忙，请稍后再试！', 'danger')
+    }
+}
+ })
+})
+```
+
+```javascript
+//node 
+
+router.post('/upload', function (res, req) {
+    var comm = req.body
+
+    User.finndOne({
+        username: comm.name
+    }, function (err, data) {
+        if (err) {
+            return res.status(500).json({
+                err_code: 500,
+                message: 'Sever Error'
+            })
+        }else{
+            if(data){
+                //ajax返回
+                return res.status(200).json({
+                    err_code: 1,
+                    message: '订单号已存在'
+                })
+            }else{
+                let nesUser = new User({
+                    username: comm.name
+                })
+                newUser.save(function(err,ret){
+                    if(err){
+                        return res.status(500).json({
+                            err_code: 500,
+                            message: 'Sever Error'
+                        })
+                    }else{
+                        return res.status(200).json({
+                            err_code: 0,
+                            message: 'OK'
+                        })
+                    }
+                })
+            }
+        }
+    })
+})
+```
+
+通过ajax提交，服务器返回状态码与设置的err_code，再于前端判定动作
