@@ -898,3 +898,163 @@ router.post('/upload', function (res, req) {
 ```
 
 通过ajax提交，服务器返回状态码与设置的err_code，再于前端判定动作
+
+
+
+### 文本数据+多图上传
+
+```html
+//html
+
+<form class="form" method="post" enctype="multipart/form-data">
+  <input type="text" class="form-control inputdata" name="name" value="">
+    
+    <input type="file" class="file" id="file1" name="fileupload" accept="image/jpeg,image/gif,image/png"/>
+  
+  <a href="javascript:;" id="upload">提交</a>
+</form>
+```
+
+```javascript
+//js ajax异步提交
+
+$('.form').on('click','#upload',function(){
+    
+                //ajax异步提交
+                e.preventDefault()
+                var formData = new FormData()
+
+                let inputdata = document.querySelectorAll('.inputdata')
+                for (let item of inputdata) {
+                    //支持循环中止
+                    formData.append(item.name, item.value)
+                }
+
+                // 获取文件
+                let picnum = document.querySelectorAll('.file').length
+
+                // console.log("图片input数："+picnum)
+
+                for (var i = 1; i < picnum+1 ;i++){
+                    let pic = document.getElementById(`file${i}`)
+                    // console.log(pic)//上传图片input控件
+                    // console.log(pic.files)//上传图片inupt控件的文件
+                    if (pic.files.length == 0){
+                        // console.log('空input')
+                    }else{
+                        var upload_file = pic.files[0]
+                        formData.append('fileupload', upload_file)
+                    }
+
+                }
+
+                // console.log(formData)
+                $.ajax({
+                    url: '/postinfo',
+                    type: 'post',
+                    data: formData,
+                    // dataType: 'json',
+                    contentType: false,
+                    //取消帮我们格式化数据，是什么就是什么
+                    processData: false,
+                    success: function (data) {
+                        let err_code = data.err_code
+                        if (err_code === 0) {
+                            $.hulla.send('上传成功', 'success')
+                            $('.modal').fadeOut()
+                        } else if (err_code === 1){
+                            $.hulla.send('订单号已存在', 'danger')
+                            $('input[name = "paynum1"]').focus()
+                            $('.modal').fadeOut()
+                        } else if (err_code === 2) {
+                            $.hulla.send('上传截图为空', 'danger')
+                            $('.modal').fadeOut()
+                        }
+                         else if(err_code === 500){
+                            $.hulla.send('服务器繁忙，请稍后重试！', 'warning')
+                            $('.modal').fadeOut()
+                        }
+                    }
+                })
+})
+```
+
+```javascript
+//node 
+
+router.post('/upload', function (res, req) {
+    var comm = req.body
+
+    User.finndOne({
+            username: comm.name
+        }, function (err, data) {
+            if (err) {
+                return res.status(500).json({
+                    err_code: 500,
+                    message: 'Sever Error'
+                })
+            } else {
+                if (data) {
+                    //ajax返回
+                    return res.status(200).json({
+                        err_code: 1,
+                        message: '订单号已存在'
+                    })
+                } else {
+
+
+                    //图片上传
+                    let filename = {}
+                    if (req.files) {
+                        let file = req.files
+                        // console.log(file) //图片文件array
+                        if (file.length == 0){
+                            return res.status(200).json({
+                                err_code: 2,
+                                message: '上传截图为空'
+                            })
+                        }else{
+                            for (i = 0; i < file.length; i++) {
+                                let fileInfo = {}
+                                fs.renameSync('./upload/' + file[i].filename, `./upload/${Date.now()}_${file[i].originalname}`)//这里修改文件名字，比较随意。
+                                // 获取文件信息
+                                filename[i] = `${Date.now()}_${file[i].originalname}`
+                                fileInfo.mimetype = file[i].mimetype
+                                fileInfo.originalname = file[i].originalname
+                                fileInfo.size = file[i].size
+                                fileInfo.path = file[i].path
+                            }
+
+                            //上传成功
+                            console.log("截图上传成功！")
+                        }
+                    } else {
+                        return res.status(200).json({
+                            err_code: 2,
+                            message: '上传截图为空'
+                        })
+                    }
+
+                    let nesUser = new User({
+                    username: comm.name
+                })
+                  newUser.save(function (err, ret) {
+                        if (err) {
+                            return res.status(500).json({
+                                err_code: 500,
+                                message: 'Sever Error'
+                            })
+                        } else {
+                            return res.status(200).json({
+                                err_code: 0,
+                                message: 'ok'
+                            })
+                        }
+                    })
+
+                }
+            }
+        })
+})
+```
+
