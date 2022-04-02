@@ -69,7 +69,7 @@ let 和 const则会not definde
     }
   }
   
-  一般把this赋值给一个参数先声明，然后后期调用；
+  一般把this赋值给一个参数先声明，然后后期调用;
   
   ......function(){
     var self = this;
